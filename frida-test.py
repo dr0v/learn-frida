@@ -48,7 +48,6 @@ def main():
     script.on('message', on_message)
     print('[*] Hook Start Running')
     script.load()
-    sys.stdin.read()
     print('hello')
     
 if __name__ == "__main__":
