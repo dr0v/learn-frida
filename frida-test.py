@@ -19,20 +19,20 @@ def on_message(message, data):
     else:
         print(message)
 
-jscode = """
-Java.perform(function () {
-    // Function to hook is defined here
-    var MainActivity = Java.use('com.example.hook.MainActivity');
-    // hook method is setString
-    MainActivity.setString.implementation = function (str) {
-        // Show a message to know that the function got called
-        send('hook success');
-        console.log('string is: ' + str));
-    };
-});
-"""
-target_name = 'com.antiy.avl' #其他包名
-js_file = './frida_android_trace.js'
+# jscode = """
+# Java.perform(function () {
+#     // Function to hook is defined here
+#     var MainActivity = Java.use('com.example.hook.MainActivity');
+#     // hook method is setString
+#     MainActivity.setString.implementation = function (str) {
+#         // Show a message to know that the function got called
+#         send('hook success');
+#         console.log('string is: ' + str);
+#     };
+# });
+# """
+target_name = 'com.tencent.mm'#com.antiy.avl' #其他包名
+js_file = '/Users/drov/Documents/py/learn-frida/frida_android_trace.js'
 
 def main():
     devices_list = frida.get_device_manager().enumerate_devices()
@@ -42,8 +42,10 @@ def main():
         if dev.id == 'emulator-5554':
             target_device = dev
     process = target_device.attach(target_name)
+    jscode= ''
     if os.path.isfile(js_file):
-        jscode = open(jscode,'r').read()
+        jscode = open(js_file,'r').read()
+    #print(jscode)
     script = process.create_script(jscode)
     script.on('message', on_message)
     print('[*] Hook Start Running')
