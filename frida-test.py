@@ -31,7 +31,7 @@ def on_message(message, data):
 #     };
 # });
 # """
-target_name = 'com.tencent.mm'#com.antiy.avl' #其他包名
+target_name = ['com.tencent.mm']#com.antiy.avl' #其他包名
 js_file = '/Users/drov/Documents/py/learn-frida/frida_android_trace.js'
 
 def main():
@@ -41,7 +41,11 @@ def main():
     for dev in devices_list:
         if dev.id == 'emulator-5554':
             target_device = dev
-    process = target_device.attach(target_name)
+    print(target_name)
+    pid = target_device.spawn(target_name)
+    print(pid)
+    target_device.resume(pid)
+    process = target_device.attach(pid)
     jscode= ''
     if os.path.isfile(js_file):
         jscode = open(js_file,'r').read()
