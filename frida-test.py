@@ -41,16 +41,16 @@ Java.perform(function () {
 });
 """
 target_name = ['com.tencent.mm']#com.antiy.avl' #其他包名
-js_file = '/Users/drov/Documents/py/learn-frida/frida_android_trace.js'
+js_file = os.path.dirname(os.path.realpath(__file__))+'/frida_android_trace.js'
 
 def loadjs(_target_device):
+    global jscode,js_file
     pid = _target_device.spawn(target_name)
     _target_device.resume(pid)
     time.sleep(1)  # Without it Java.perform silently fails
     process = _target_device.attach(pid)
     if os.path.isfile(js_file):
         jscode = open(js_file,'r').read()
-    #print(jscode)
     script = process.create_script(jscode)
     script.on('message', on_message)
     script.load()
@@ -69,11 +69,14 @@ def main():
     command = ""
     while 1 == 1:
         command = input("Enter command:\n1: Exit\n2: reload js\n3: Hook Secret\nchoice:")
-        if command == 1:
+        if command == '1':
             break
-        elif command == 2:
+        elif command == '2':
             loadjs(target_device)
-        elif command == 3:
+        elif command == '3':
+            continue
+        else:
+            print(bcolors.WARNING,'please input the right command (1 or 2 or 3) ~',bcolors.ENDC)
             continue
     
 if __name__ == "__main__":
