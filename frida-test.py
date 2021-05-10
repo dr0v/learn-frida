@@ -24,7 +24,10 @@ class bcolors:
 
 def on_message(message, data):
     if message['type'] == 'send':
-        print(bcolors.OKGREEN,"[*] {0}".format(message['payload']),bcolors.ENDC)
+        if message['payload'].startswith('**'):
+            print(bcolors.HEADER,"[*] {0}".format(message['payload']),bcolors.ENDC)
+        else:
+            print(bcolors.OKGREEN,"[*] {0}".format(message['payload']),bcolors.ENDC)
     else:
         print(bcolors.WARNING,message,bcolors.ENDC)
 
@@ -80,4 +83,4 @@ def main():
             continue
     
 if __name__ == "__main__":
-    main()
+    main() 

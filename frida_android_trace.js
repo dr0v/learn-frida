@@ -43,8 +43,8 @@ function trace(pattern)
 			onMatch: function(aClass) {
 				if (aClass.match(pattern)) {
 					found = true;
-					var className = aClass.match(/[L](.*);/)[1].replace(/\//g, ".");
-					traceClass(className);
+					//var className = aClass.match(/[L](.*);/)[1].replace(/\//g, ".");
+					traceClass(aClass);
 				}
 			},
 			onComplete: function() {}
@@ -97,7 +97,7 @@ function traceMethod(targetClassMethod)
 	for (var i = 0; i < overloadCount; i++) {
 
 		hook[targetMethod].overloads[i].implementation = function() {
-			console.warn("\n*** entered " + targetClassMethod);
+			send("*** entered " + targetClassMethod);
 
 			// print backtrace
 			// Java.perform(function() {
@@ -106,15 +106,15 @@ function traceMethod(targetClassMethod)
 			// });   
 
 			// print args
-			if (arguments.length) send();
+			if (arguments.length) send(arguments.length+" arguments:");
 			for (var j = 0; j < arguments.length; j++) {
 				send("arg[" + j + "]: " + arguments[j]);
 			}
 
 			// print retval
 			var retval = this[targetMethod].apply(this, arguments); // rare crash (Frida bug?)
-			send("\nretval: " + retval);
-			console.warn("\n*** exiting " + targetClassMethod);
+			send("retval: " + retval);
+			send("***** exiting " + targetClassMethod);
 			return retval;
 		}
 	}
@@ -137,7 +137,7 @@ function traceModule(impl, name)
 				this.flag = true;
 
 			if (this.flag) {
-				console.warn("\n*** entered " + name);
+				send("\n*** entered " + name);
 
 				// print backtrace
 				send("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
@@ -150,7 +150,7 @@ function traceModule(impl, name)
 			if (this.flag) {
 				// print retval
 				send("\nretval: " + retval);
-				console.warn("\n*** exiting " + name);
+				send("\n*** exiting " + name);
 			}
 		}
 
@@ -175,8 +175,9 @@ setTimeout(function() { // avoid java.lang.ClassNotFoundException
 		// trace("com.target.utils.CryptoUtils.decrypt");
 		// trace("com.target.utils.CryptoUtils");
 		// trace("CryptoUtils");
+		trace("CryptoUtils*");
 		// trace(/crypto/i);
-		trace("exports:*!open*");
+		// trace("exports:*!open*");
 
 	});   
 }, 0);
