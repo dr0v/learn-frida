@@ -175,7 +175,7 @@ setTimeout(function() { // avoid java.lang.ClassNotFoundException
 		// trace("com.target.utils.CryptoUtils.decrypt");
 		// trace("com.target.utils.CryptoUtils");
 		// trace("CryptoUtils");
-		trace("CryptoUtils*");
+		//trace("CryptoUtils*");
 		// trace(/crypto/i);
 		// trace("exports:*!open*");
 
@@ -209,7 +209,7 @@ Java.perform(function(){
     MessageDigest.digest.overload("[B","int","int").implementation = function(buf,offset,len){
         send('use digest.overload("[B","int","int")');
         parseIn(buf);
-        var ret = digest(buf,offset,len);
+        var ret = this.digest(buf,offset,len);
         parseOut(ret);
         return ret;
     }
@@ -217,7 +217,7 @@ Java.perform(function(){
     MessageDigest.digest.overload("[B").implementation = function(buf){
         send('use digest.overload("[B")');
         parseIn(buf);
-        var ret = digest(buf);
+        var ret = this.digest(buf);
         parseOut(ret);
         return ret;
     }
@@ -243,7 +243,7 @@ Java.perform(function(){
                 val += 256;
             }
             var str = Integer.toHexString(val);
-            if(String.$new(str).length() == 1){
+            if(str.length == 1){
                 str = "0"+str;
             }
             result += str;
