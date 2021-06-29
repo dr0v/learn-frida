@@ -175,7 +175,9 @@ setTimeout(function() { // avoid java.lang.ClassNotFoundException
 		// trace("com.target.utils.CryptoUtils.decrypt");
 		// trace("com.target.utils.CryptoUtils");
 		// trace("CryptoUtils");
-		//trace("CryptoUtils*");
+        for (var i = 0;i<class_name.length;i++){
+            trace(class_name[i]+"*");
+        }
 		// trace(/crypto/i);
 		// trace("exports:*!open*");
 

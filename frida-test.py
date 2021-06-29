@@ -36,7 +36,7 @@ Java.perform(function () {
     };
 });
 """
-target_name = ['com.nn.mm']
+target_name = 'com.nn.mm'
 local_path = os.path.dirname(os.path.realpath(__file__))
 config_file = local_path+'/frida.config'
 js_files = ['frida_android_trace.js'] 
@@ -45,7 +45,7 @@ log_file = local_path+'/{0}'+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()
 
 def on_message(message, data):
     global log_file,target_name
-    log = open(log_file.format(target_name[0]),'a+')
+    log = open(log_file.format(target_name),'a+')
     if message['type'] == 'send':
         if message['payload'].startswith('**'):
             print(bcolors.HEADER,"[*] {0}".format(message['payload']),bcolors.ENDC)
@@ -71,14 +71,18 @@ def readjs(_path):
     return js_code
 
 def loadjs(_target_device):
-    global jscode,local_path,config_file,js_files
+    global jscode,local_path,config_file,js_files,target_name
     
     config_raw = configparser.RawConfigParser()
     config_raw.read(config_file)
     target_name = config_raw.get('DEFAULT', 'target_name')
+    # target_class is a list
+    target_class = config_raw.get('DEFAULT', 'target_class')
     js_files = config_raw.get('DEFAULT','js_files')
     # 读取待加载模块 ，方便 js hook 代码模块化
-    jscode = readjs(local_path)
+    jscode = 'var class_name = {0};\n'.format(target_class)
+    print(jscode)
+    jscode = jscode + readjs(local_path)
     # 每次确认是否载入的是预期的目标和代码
     print(bcolors.HEADER ,'target device ====> ',_target_device.id,_target_device.name,bcolors.ENDC)
     print(bcolors.OKBLUE ,'target app    ====> ',target_name,bcolors.ENDC)
@@ -88,6 +92,7 @@ def loadjs(_target_device):
         pid = _target_device.spawn(target_name)
     except:
         print(bcolors.FAIL,'can\'t spawn',target_name,'\n please recheck frida.config and reload js',bcolors.ENDC)
+        print('error:   ',sys.exc_info())
         return
     _target_device.resume(pid)
     time.sleep(1)  # Without it Java.perform silently fails
