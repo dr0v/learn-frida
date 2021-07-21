@@ -21,6 +21,8 @@
  */
 
 // generic trace
+console.log('frida_android_trace.js called!');
+
 function trace(pattern)
 {
 	var type = (pattern.toString().indexOf("!") === -1) ? "java" : "module";

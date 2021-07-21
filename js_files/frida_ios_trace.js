@@ -20,6 +20,8 @@
  * https://github.com/0xdea/frida-scripts/
  */
 
+console.log('frida_ios_trace.js called!');
+
 // generic trace
 function trace(pattern)
 {
@@ -49,7 +51,7 @@ function uniqBy(array, key)
 // trace ObjC methods
 function traceObjC(impl, name)
 {
-	console.log("Tracing " + name);
+	send("Tracing " + name);
 
 	Interceptor.attach(impl, {
 
@@ -64,15 +66,15 @@ function traceObjC(impl, name)
 				console.warn("\n*** entered " + name);
 
 				// print full backtrace
-				// console.log("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
+				// send("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
 				//		.map(DebugSymbol.fromAddress).join("\n"));
 
 				// print caller
-				console.log("\nCaller: " + DebugSymbol.fromAddress(this.returnAddress));
+				send("\nCaller: " + DebugSymbol.fromAddress(this.returnAddress));
 
 				// print args
 				if (name.indexOf(":") !== -1) {
-					console.log();
+					send();
 					var par = name.split(":");
 					par[0] = par[0].split(" ")[1];
 					for (var i = 0; i < par.length - 1; i++)
@@ -96,7 +98,7 @@ function traceObjC(impl, name)
 // trace Module functions
 function traceModule(impl, name)
 {
-	console.log("Tracing " + name);
+	send("Tracing " + name);
 
 	Interceptor.attach(impl, {
 
@@ -113,7 +115,7 @@ function traceModule(impl, name)
 				console.warn("\n*** entered " + name);
 
 				// print backtrace
-				console.log("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
+				send("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
 						.map(DebugSymbol.fromAddress).join("\n"));
 			}
 		},
@@ -134,10 +136,10 @@ function traceModule(impl, name)
 function printArg(desc, arg)
 {
 	try {
-		console.log(desc + ObjC.Object(arg));
+		send(desc + ObjC.Object(arg));
 	}
 	catch(err) {
-		console.log(desc + arg);
+		send(desc + arg);
 	}
 }
 
