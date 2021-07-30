@@ -21,7 +21,7 @@
  */
 
 // generic trace
-console.log('frida_android_trace.js called!');
+send('========== frida_android_trace.js called! ==========');
 
 function trace(pattern)
 {

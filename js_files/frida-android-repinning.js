@@ -9,7 +9,7 @@
    UPDATE 20191605: Fixed undeclared var. Thanks to @oleavr and @ehsanpc9999 !
 */
 
-console.log('frida_android_repinning.js called!');
+send('========== frida_android_repinning.js called! ==========');
 
 setTimeout(function(){
     Java.perform(function (){

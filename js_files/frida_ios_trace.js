@@ -20,7 +20,7 @@
  * https://github.com/0xdea/frida-scripts/
  */
 
-console.log('frida_ios_trace.js called!');
+send('========== frida_ios_trace.js called! ==========');
 
 // generic trace
 function trace(pattern)

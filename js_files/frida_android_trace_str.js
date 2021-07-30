@@ -1,6 +1,6 @@
 // try to hook strstr
 
-console.log('frida_android_trace_str.js called!');
+send('========== frida_android_trace_str.js called! ==========');
 
 
 // Interceptor.attach(Module.findExportByName("libc.so", "strlen"), {
@@ -30,6 +30,7 @@ Interceptor.attach(Module.findExportByName("libc.so", "strstr"), {
     },
     onLeave: function(retval){
         if (this.ishooked){
+            send('strstr find hooked, replaced!');
             retval.replace(0);
         };
         return retval;
