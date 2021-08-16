@@ -94,9 +94,11 @@ def loadjs(_target_device):
         print(bcolors.FAIL,'can\'t spawn',target_name,'\n please recheck frida.config and reload js',bcolors.ENDC)
         print('error:   ',sys.exc_info())
         return
-    _target_device.resume(pid)
-    time.sleep(1)  # Without it Java.perform silently fails
+    
     process = _target_device.attach(pid)
+    _target_device.resume(pid)
+
+  #  time.sleep(1)  # Without it Java.perform silently fails
 
     script = process.create_script(jscode)
     script.on('message', on_message)
