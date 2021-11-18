@@ -25,7 +25,7 @@ send('========== frida_ios_trace.js called! ==========');
 // generic trace
 function trace(pattern)
 {
-	var type = (pattern.indexOf(" ") === -1) ? "module" : "objc";
+	var type = (pattern.indexOf("!") === -1) ? "objc" : "module";
 	var res = new ApiResolver(type);
 	var matches = res.enumerateMatchesSync(pattern);
 	var targets = uniqBy(matches, JSON.stringify);
@@ -67,18 +67,18 @@ function traceObjC(impl, name)
 
 				// print full backtrace
 				// send("\nBacktrace:\n" + Thread.backtrace(this.context, Backtracer.ACCURATE)
-				//		.map(DebugSymbol.fromAddress).join("\n"));
+				// 		.map(DebugSymbol.fromAddress).join("\n"));
 
 				// print caller
 				send("\nCaller: " + DebugSymbol.fromAddress(this.returnAddress));
 
 				// print args
 				if (name.indexOf(":") !== -1) {
-					send();
+					// send(name);
 					var par = name.split(":");
 					par[0] = par[0].split(" ")[1];
 					for (var i = 0; i < par.length - 1; i++)
-						printArg(par[i] + ": ", args[i + 2]);
+						printArg(par[i] + " [ args["+i+"] ]: ", args[i + 2]);
 				}
 			}
 		},
@@ -132,6 +132,7 @@ function traceModule(impl, name)
 	});
 }
 
+
 // print helper
 function printArg(desc, arg)
 {
@@ -149,9 +150,17 @@ if (ObjC.available) {
 	// trace("-[CredManager setPassword:]");
 	// trace("*[CredManager *]");
 	// trace("*[* *Password:*]");
+	trace("*[* *URLWithString:*]");
+	// trace("exports:*!CC_MD5*");
+	// trace("*[NSData *]");
+	trace("*[* V6::EncodeRequest]*");
+	// trace("*[* *setHTTPBody:*]");
 	// trace("exports:libSystem.B.dylib!CCCrypt");
 	// trace("exports:libSystem.B.dylib!open");
 	// trace("exports:*!open*");
+        // for (var i = 0;i<class_name.length;i++){
+        //     trace("*[* *"+class_name[i]+"*]");
+        // }
 	
 } else {
  	send("error: Objective-C Runtime is not available!");

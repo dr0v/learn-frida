@@ -10,7 +10,6 @@
 #
 
 import os
-from tkinter import EXCEPTION
 import frida, sys, time
 import configparser
 
@@ -80,8 +79,8 @@ def loadjs(_target_device):
     target_class = config_raw.get('DEFAULT', 'target_class')
     js_files = config_raw.get('DEFAULT','js_files')
     # 读取待加载模块 ，方便 js hook 代码模块化
+    # sdfasdf
     jscode = 'var class_name = {0};\n'.format(target_class)
-    print(jscode)
     jscode = jscode + readjs(local_path)
     # 每次确认是否载入的是预期的目标和代码
     print(bcolors.HEADER ,'target device ====> ',_target_device.id,_target_device.name,bcolors.ENDC)
@@ -90,12 +89,12 @@ def loadjs(_target_device):
 
     try:
         pid = _target_device.spawn(target_name)
+        print(pid)
     except:
         print(bcolors.FAIL,'can\'t spawn',target_name,'\n please recheck frida.config and reload js',bcolors.ENDC)
         print('error:   ',sys.exc_info())
         return
-    
-    process = _target_device.attach(pid)
+    process = _target_device.attach(pid)#int(target_name))#
     _target_device.resume(pid)
 
   #  time.sleep(1)  # Without it Java.perform silently fails
@@ -103,6 +102,9 @@ def loadjs(_target_device):
     script = process.create_script(jscode)
     script.on('message', on_message)
     script.load()
+    # for i in range(5):
+    #     time.sleep(0.5)
+    #     script.exports.myfunc()
     
 
 def main():

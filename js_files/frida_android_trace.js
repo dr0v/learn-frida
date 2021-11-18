@@ -23,6 +23,43 @@
 // generic trace
 send('========== frida_android_trace.js called! ==========');
 
+rpc.exports = {
+    myfunc: function(){
+        Java.perform(function(){
+            try{
+                
+        var RSAUtils = Java.use('com.chaos.view.example.RSAUtils');
+        var Base64Utils = Java.use('com.chaos.view.example.Base64Utils');
+        var MainActivity = Java.use('com.chaos.view.example.MainActivity');
+        RSAUtils.$new();
+        Base64Utils.$new();
+
+
+        var currentApplication = Java.use("android.app.ActivityThread").currentApplication();
+        var context = currentApplication.getApplicationContext();
+        send('diaoyong decode start ============> ');
+        send('private_key ============> '+MainActivity.password_cipher.value);
+        //var v1_1 = RSAUtils.loadPublicKey.overload('java.lang.String').call(context,MainActivity.public_key);
+        var v4 = RSAUtils.loadPrivateKey.overload('java.lang.String').call(context,MainActivity.private_key);
+        // var v1_2 = RSAUtils.encryptDataPublic(Qaq.encode(v2, v3.intValue()).getBytes(), v1_1);
+        // var v2_1 = Base64Utils.encode(v1_2);
+        // RSAUtils.decryptDataPrivate(v1_2, v4);
+        var call_clz = Base64Utils.decode.overload('java.lang.String');
+        if(call_clz){
+
+            console.log('can\'t find Base64Utils.decode');
+        }
+        var v2_1 = call_clz.call(context,MainActivity.password_cipher);
+        var ret_str = RSAUtils.decryptDataPrivate(v2_1,v4);
+        send('diaoyong decode end   ============> '+Base64Utils.encode(ret_str));
+            }catch(e){
+                console.log(e)
+            }
+        });
+    }
+}
+
+
 function trace(pattern)
 {
 	var type = (pattern.toString().indexOf("!") === -1) ? "java" : "module";
@@ -173,13 +210,13 @@ function uniqBy(array, key)
 setTimeout(function() { // avoid java.lang.ClassNotFoundException
 
 	Java.perform(function() {
-
 		// trace("com.target.utils.CryptoUtils.decrypt");
 		// trace("com.target.utils.CryptoUtils");
 		// trace("CryptoUtils");
         for (var i = 0;i<class_name.length;i++){
             trace(class_name[i]+"*");
         }
+        
 		// trace(/crypto/i);
 		// trace("exports:*!open*");
 
@@ -190,6 +227,7 @@ setTimeout(function() { // avoid java.lang.ClassNotFoundException
 //* let's hook MD5 (in java)
 //********************************************************************************************
 Java.perform(function(){
+
     var MessageDigest = Java.use('java.security.MessageDigest');
     MessageDigest.getInstance.overload('java.lang.String').implementation = function(arg1){
         send(arg1);
@@ -314,6 +352,7 @@ Java.perform(function (){
     var cipher = Java.use("javax.crypto.Cipher");
     cipher.getInstance.overload('java.lang.String').implementation = function(str){
         send("METHOD: "+str);
+
         return this.getInstance(str);
     }
 
