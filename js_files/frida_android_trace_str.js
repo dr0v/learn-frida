@@ -1,8 +1,5 @@
 // try to hook strstr
 
-send('========== frida_android_trace_str.js called! ==========');
-
-
 // Interceptor.attach(Module.findExportByName("libc.so", "strlen"), {
 //     onEnter: function(args) {
 //         send("strlen, arg0="+Memory.readUtf8String(args[0]));

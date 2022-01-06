@@ -21,7 +21,6 @@
  */
 
 // generic trace
-send('========== frida_android_trace.js called! ==========');
 
 rpc.exports = {
     myfunc: function(){
